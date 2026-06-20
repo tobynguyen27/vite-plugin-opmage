@@ -4,8 +4,9 @@ import { pngCompressor } from './compressors/png';
 import { jpegCompressor } from './compressors/jpeg';
 import { webpCompressor } from './compressors/webp';
 import { avifCompressor } from './compressors/avif';
-import { forEach, gen, runPromise } from 'effect/Effect';
+import { forEach, gen, runPromise, tap, timed } from 'effect/Effect';
 import { getFileExtension } from './utils/file';
+import { Duration, pipe } from 'effect';
 
 export default function Opmage(opts: Partial<Options> = {}): Plugin {
 	const options = { ...defaultOptions, ...opts } satisfies Options;
@@ -13,7 +14,7 @@ export default function Opmage(opts: Partial<Options> = {}): Plugin {
 	return {
 		name: 'rolldown-plugin-opmage',
 		async generateBundle(outputOptions, bundles, isWrite) {
-			const program = forEach(
+			const compressor = forEach(
 				Object.values(bundles),
 				(bundle) =>
 					gen(function* () {
@@ -39,6 +40,13 @@ export default function Opmage(opts: Partial<Options> = {}): Plugin {
 						}
 					}),
 				{ concurrency: options.concurrency },
+			);
+
+			const program = compressor.pipe(
+				timed,
+				tap(([duration]) => {
+					this.info(`Completed in ${pipe(duration, Duration.format)}`);
+				}),
 			);
 
 			await runPromise(program);
