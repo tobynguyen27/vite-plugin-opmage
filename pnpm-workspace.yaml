@@ -19,6 +19,7 @@ catalogs:
     effect: ^3.21.4
     pathe: ^2.0.3
     p-limit: ^7.3.0
+    picocolors: ^1.1.1
 
 minimumReleaseAgeExclude:
   - '@oxc-project/types@0.137.0'

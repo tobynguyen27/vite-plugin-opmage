@@ -229,6 +229,9 @@ catalogs:
     pathe:
       specifier: ^2.0.3
       version: 2.0.3
+    picocolors:
+      specifier: ^1.1.1
+      version: 1.1.1
   scripts:
     bumpp:
       specifier: ^11.1.0
@@ -267,6 +270,9 @@ importers:
       pathe:
         specifier: catalog:prod
         version: 2.0.3
+      picocolors:
+        specifier: catalog:prod
+        version: 1.1.1
       rolldown:
         specifier: catalog:dev
         version: 1.1.2
