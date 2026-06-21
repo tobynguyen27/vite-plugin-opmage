@@ -1,15 +1,13 @@
-import type { LosslessPngOptions, LossyPngOptions, PngOptions } from '@/options';
+import { Config } from '@/options';
 import { losslessCompressPng, pngQuantize } from '@napi-rs/image';
-import { tryPromise } from 'effect/Effect';
+import { gen, tryPromise } from 'effect/Effect';
 
-export const pngCompressor = (buffer: Uint8Array, options: PngOptions) => {
-	if (options.algorithm === 'lossless') return losslessPngCompressor(buffer, options);
+export const pngCompressor = (buffer: Uint8Array) =>
+	gen(function* () {
+		const { png } = yield* Config;
 
-	return lossyPngCompressor(buffer, options);
-};
+		if (png.algorithm === 'lossless')
+			return yield* tryPromise(() => losslessCompressPng(buffer, png));
 
-const losslessPngCompressor = (buffer: Uint8Array, options: LosslessPngOptions) =>
-	tryPromise(() => losslessCompressPng(buffer, options));
-
-const lossyPngCompressor = (buffer: Uint8Array, options: LossyPngOptions) =>
-	tryPromise(() => pngQuantize(buffer, options));
+		return yield* tryPromise(() => pngQuantize(buffer, png));
+	});

@@ -1,6 +1,10 @@
-import type { JpegOptions } from '@/options';
+import { Config } from '@/options';
 import { compressJpeg } from '@napi-rs/image';
-import { tryPromise } from 'effect/Effect';
+import { gen, tryPromise } from 'effect/Effect';
 
-export const jpegCompressor = (buffer: Uint8Array, options: JpegOptions) =>
-	tryPromise(() => compressJpeg(buffer, options));
+export const jpegCompressor = (buffer: Uint8Array) =>
+	gen(function* () {
+		const { jpeg } = yield* Config;
+
+		return yield* tryPromise(() => compressJpeg(buffer, jpeg));
+	});

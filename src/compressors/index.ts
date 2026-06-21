@@ -20,17 +20,17 @@ export const compressor = (bundles: OutputBundle, options: Options) =>
 
 				switch (fileExtension) {
 					case 'png':
-						bundle.source = yield* pngCompressor(buffer, options.png);
+						bundle.source = yield* pngCompressor(buffer);
 						break;
 					case 'jpg':
 					case 'jpeg':
-						bundle.source = yield* jpegCompressor(buffer, options.jpeg);
+						bundle.source = yield* jpegCompressor(buffer);
 						break;
 					case 'webp':
-						bundle.source = yield* webpCompressor(buffer, options.webp);
+						bundle.source = yield* webpCompressor(buffer);
 						break;
 					case 'avif':
-						bundle.source = yield* avifCompressor(buffer, options.avif);
+						bundle.source = yield* avifCompressor(buffer);
 						break;
 				}
 			}),

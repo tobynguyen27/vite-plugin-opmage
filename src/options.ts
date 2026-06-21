@@ -4,6 +4,7 @@ import type {
 	PNGLosslessOptions,
 	PngQuantOptions,
 } from '@napi-rs/image';
+import { Context } from 'effect';
 
 export type LosslessPngOptions = { algorithm: 'lossless' } & PNGLosslessOptions;
 export type LossyPngOptions = { algorithm: 'lossy' } & PngQuantOptions;
@@ -42,3 +43,5 @@ export const defaultOptions: Options = {
 		quality: 75,
 	},
 };
+
+export class Config extends Context.Tag('rolldown-plugin-opmage/Config')<Config, Options>() {}

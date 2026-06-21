@@ -1,15 +1,13 @@
-import type { LossyWebpOptions, WebpOptions } from '@/options';
+import { Config } from '@/options';
 import { Transformer } from '@napi-rs/image';
-import { tryPromise } from 'effect/Effect';
+import { gen, tryPromise } from 'effect/Effect';
 
-export const webpCompressor = (buffer: Uint8Array, options: WebpOptions) => {
-	if (options.algorithm === 'lossless') return losslessWebpCompressor(buffer);
+export const webpCompressor = (buffer: Uint8Array) =>
+	gen(function* () {
+		const { webp } = yield* Config;
 
-	return lossyWebpCompressor(buffer, options);
-};
+		if (webp.algorithm === 'lossless')
+			return yield* tryPromise(() => new Transformer(buffer).webpLossless());
 
-const losslessWebpCompressor = (buffer: Uint8Array) =>
-	tryPromise(() => new Transformer(buffer).webpLossless());
-
-const lossyWebpCompressor = (buffer: Uint8Array, { quality }: LossyWebpOptions) =>
-	tryPromise(() => new Transformer(buffer).webp(quality));
+		return yield* tryPromise(() => new Transformer(buffer).webp(webp.quality));
+	});
