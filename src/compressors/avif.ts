@@ -1,10 +1,6 @@
 import type { AvifOptions } from '@/options';
 import { Transformer } from '@napi-rs/image';
-import type { UnknownException } from 'effect/Cause';
-import { tryPromise, type Effect } from 'effect/Effect';
+import { tryPromise } from 'effect/Effect';
 
-export const avifCompressor = (
-	buffer: Uint8Array,
-	options: AvifOptions,
-): Effect<Buffer, UnknownException, never> =>
+export const avifCompressor = (buffer: Uint8Array, options: AvifOptions) =>
 	tryPromise(() => new Transformer(buffer).avif(options));

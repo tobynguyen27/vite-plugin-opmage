@@ -1,17 +1,13 @@
 import { getFileExtension } from '@/utils/file';
-import { forEach, gen, type Effect } from 'effect/Effect';
+import { forEach, gen } from 'effect/Effect';
 import type { OutputAsset, OutputBundle } from 'rolldown';
 import { pngCompressor } from './png';
 import { jpegCompressor } from './jpeg';
 import { webpCompressor } from './webp';
 import { avifCompressor } from './avif';
-import type { UnknownException } from 'effect/Cause';
 import type { Options } from '@/options';
 
-export const compressor = (
-	bundles: OutputBundle,
-	options: Options,
-): Effect<void[], UnknownException> =>
+export const compressor = (bundles: OutputBundle, options: Options) =>
 	forEach(
 		Object.values(bundles).filter(
 			(bundle): bundle is OutputAsset & { source: Uint8Array } =>

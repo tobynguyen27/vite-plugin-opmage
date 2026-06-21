@@ -11,7 +11,7 @@ export default function Opmage(opts: Partial<Options> = {}): Plugin {
 
 	return {
 		name: 'rolldown-plugin-opmage',
-		async generateBundle(outputOptions, bundles, isWrite) {
+		async generateBundle(_, bundles) {
 			const program = pipe(
 				compressor(bundles, options),
 				timed,

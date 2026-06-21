@@ -1,7 +1,7 @@
-import { defineConfig, type UserConfig } from 'vite-plus';
+import { defineConfig } from 'vite-plus';
 import { recommended as oxlintCasePolice } from 'oxlint-plugin-case-police';
 
-const config: UserConfig = defineConfig({
+export default defineConfig({
 	resolve: {
 		tsconfigPaths: true,
 	},
@@ -40,5 +40,3 @@ const config: UserConfig = defineConfig({
 		],
 	},
 });
-
-export default config;

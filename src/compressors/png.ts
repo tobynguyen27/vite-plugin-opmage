@@ -1,12 +1,8 @@
 import type { LosslessPngOptions, LossyPngOptions, PngOptions } from '@/options';
 import { losslessCompressPng, pngQuantize } from '@napi-rs/image';
-import type { UnknownException } from 'effect/Cause';
-import { tryPromise, type Effect } from 'effect/Effect';
+import { tryPromise } from 'effect/Effect';
 
-export const pngCompressor = (
-	buffer: Uint8Array,
-	options: PngOptions,
-): Effect<Buffer, UnknownException, never> => {
+export const pngCompressor = (buffer: Uint8Array, options: PngOptions) => {
 	if (options.algorithm === 'lossless') return losslessPngCompressor(buffer, options);
 
 	return lossyPngCompressor(buffer, options);
