@@ -5,8 +5,9 @@ import { Duration, Layer, pipe } from 'effect';
 import { compressor } from './compressors';
 import { convertMillisecondsToSeconds } from './utils/time';
 import pc from 'picocolors';
-import { Logger } from './logger';
+import { createLogger, Logger } from './services/logger';
 import { CacheStorage, createCacheStorage } from './services/cache';
+import { provideMerge } from 'effect/Layer';
 
 export default function Opmage(opts: Partial<Options> = {}): Plugin {
 	const options = { ...defaultOptions, ...opts } satisfies Options;
@@ -17,17 +18,16 @@ export default function Opmage(opts: Partial<Options> = {}): Plugin {
 	return {
 		name: 'rolldown-plugin-opmage',
 		async generateBundle(_, bundles) {
-			const LoggerLive = Layer.succeed(Logger, {
-				info: this.info,
-				warn: this.warn,
-				error: this.error,
-			});
+			const LoggerLive = Layer.succeed(Logger, createLogger(this));
+
+			const AppConfigLive = ConfigLive.pipe(
+				provideMerge(CacheStorageLive),
+				provideMerge(LoggerLive),
+			);
 
 			const program = pipe(
 				compressor(bundles),
-				provide(ConfigLive),
-				provide(LoggerLive),
-				provide(CacheStorageLive),
+				provide(AppConfigLive),
 
 				timed,
 				tap(([duration]) => {

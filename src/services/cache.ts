@@ -5,7 +5,6 @@ import { createStorage } from 'unstorage';
 import fsDriver from 'unstorage/drivers/fs-lite';
 
 interface CacheStorageService {
-	has: (key: string) => Effect<boolean, UnknownException, never>;
 	get: (key: string) => Effect<string | null, UnknownException, never>;
 	set: (key: string, value: string) => Effect<void, UnknownException, never>;
 }
@@ -22,7 +21,6 @@ export const createCacheStorage = sync(
 		});
 
 		return {
-			has: (key: string) => tryPromise(() => storage.has(key)),
 			get: (key: string) => tryPromise(() => storage.get<string>(key)),
 			set: (key: string, value: string) => tryPromise(() => storage.set(key, value)),
 		} satisfies CacheStorageService;
