@@ -9,6 +9,8 @@ import { Config } from '@/options';
 import { Logger } from '@/logger';
 import { Duration, pipe, Ref } from 'effect';
 import prettyBytes from 'pretty-bytes';
+import { hash } from 'ohash';
+import { CacheStorage } from '@/services/cache';
 
 export const compressor = (bundles: OutputBundle) =>
 	gen(function* () {
@@ -17,7 +19,9 @@ export const compressor = (bundles: OutputBundle) =>
 				bundle.type === 'asset' && typeof bundle.source !== 'string',
 		);
 
-		const { concurrency } = yield* Config;
+		const { concurrency, ...config } = yield* Config;
+		const cacheStorage = yield* CacheStorage;
+
 		const counter = yield* Ref.make(1);
 
 		yield* forEach(
@@ -29,34 +33,60 @@ export const compressor = (bundles: OutputBundle) =>
 					const fileExtension = getFileExtension(bundle.fileName);
 					const buffer = bundle.source;
 
-					const oldSizeInBytes = prettyBytes(buffer.byteLength);
-					const [duration, newBuffer] = yield* pipe(
-						gen(function* () {
-							switch (fileExtension) {
-								case 'png':
-									return yield* pngCompressor(buffer);
-								case 'jpg':
-								case 'jpeg':
-									return yield* jpegCompressor(buffer);
-								case 'webp':
-									return yield* webpCompressor(buffer);
-								case 'avif':
-									return yield* avifCompressor(buffer);
-								default:
-									return buffer;
-							}
-						}),
-						timed,
+					const bufferStr = Buffer.from(buffer).toString('base64');
+
+					const cachedKey = pipe(
+						config[fileExtension as keyof typeof config],
+						JSON.stringify,
+						(str) => str + bufferStr,
+						hash,
 					);
-					const resolveTimeMs = pipe(Duration.toMillis(duration), Math.round);
 
-					bundle.source = newBuffer;
+					const cacheHit = yield* cacheStorage.has(cachedKey);
+					const cacheValue = yield* cacheStorage.get(cachedKey);
 
-					const index = yield* Ref.getAndUpdate(counter, (n) => n + 1);
+					if (cacheHit && cacheValue) {
+						const b = Buffer.from(cacheValue, 'base64');
 
-					logger.info(
-						`${bundle.fileName} (before: ${oldSizeInBytes}) (after: ${prettyBytes(newBuffer.byteLength)}) (${resolveTimeMs}ms) (${index}/${Object.values(bundles).length - 1})`,
-					);
+						bundle.source = b;
+
+						const index = yield* Ref.getAndUpdate(counter, (n) => n + 1);
+
+						logger.info(
+							`${bundle.fileName} (reused cache entry) (+0ms) (${index}/${Object.values(bundles).length - 1})`,
+						);
+					} else {
+						yield* cacheStorage.set(cachedKey, bufferStr);
+
+						const oldSizeInBytes = prettyBytes(buffer.byteLength);
+						const [duration, newBuffer] = yield* pipe(
+							gen(function* () {
+								switch (fileExtension) {
+									case 'png':
+										return yield* pngCompressor(buffer);
+									case 'jpg':
+									case 'jpeg':
+										return yield* jpegCompressor(buffer);
+									case 'webp':
+										return yield* webpCompressor(buffer);
+									case 'avif':
+										return yield* avifCompressor(buffer);
+									default:
+										return buffer;
+								}
+							}),
+							timed,
+						);
+						const resolveTimeMs = pipe(Duration.toMillis(duration), Math.round);
+
+						bundle.source = newBuffer;
+
+						const index = yield* Ref.getAndUpdate(counter, (n) => n + 1);
+
+						logger.info(
+							`${bundle.fileName} (before: ${oldSizeInBytes}) (after: ${prettyBytes(newBuffer.byteLength)}) (${resolveTimeMs}ms) (${index}/${Object.values(bundles).length - 1})`,
+						);
+					}
 				}),
 			{ concurrency },
 		);

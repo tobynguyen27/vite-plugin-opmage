@@ -6,11 +6,13 @@ import { compressor } from './compressors';
 import { convertMillisecondsToSeconds } from './utils/time';
 import pc from 'picocolors';
 import { Logger } from './logger';
+import { CacheStorage, createCacheStorage } from './services/cache';
 
 export default function Opmage(opts: Partial<Options> = {}): Plugin {
 	const options = { ...defaultOptions, ...opts } satisfies Options;
 
 	const ConfigLive = Layer.succeed(Config, options);
+	const CacheStorageLive = Layer.effect(CacheStorage, createCacheStorage);
 
 	return {
 		name: 'rolldown-plugin-opmage',
@@ -25,6 +27,7 @@ export default function Opmage(opts: Partial<Options> = {}): Plugin {
 				compressor(bundles),
 				provide(ConfigLive),
 				provide(LoggerLive),
+				provide(CacheStorageLive),
 
 				timed,
 				tap(([duration]) => {

@@ -38,10 +38,12 @@
 	},
 	"dependencies": {
 		"effect": "catalog:prod",
+		"ohash": "catalog:prod",
 		"p-limit": "catalog:prod",
 		"pathe": "catalog:prod",
 		"picocolors": "catalog:prod",
-		"pretty-bytes": "catalog:prod"
+		"pretty-bytes": "catalog:prod",
+		"unstorage": "catalog:prod"
 	},
 	"devDependencies": {
 		"@effect/language-service": "catalog:types",
