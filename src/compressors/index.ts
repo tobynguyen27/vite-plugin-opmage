@@ -66,10 +66,13 @@ export const compressor = (bundles: OutputBundle) =>
 							`${bundle.fileName} (reused cache entry) (+0ms) (${index}/${total})`,
 						);
 					} else {
-						yield* cacheStorage.set(cacheKey, stringBuffer);
-
 						const [duration, newBuffer] = yield* timed(compress(fileExtension, buffer));
 						const resolveTimeMs = pipe(Duration.toMillis(duration), Math.round);
+
+						yield* cacheStorage.set(
+							cacheKey,
+							Buffer.from(newBuffer).toString('base64'),
+						);
 
 						bundle.source = newBuffer;
 						logger.info(
