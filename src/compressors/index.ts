@@ -40,7 +40,7 @@ export const compressor = (bundles: OutputBundle) =>
 		const cacheStorage = yield* CacheStorage;
 
 		const counter = yield* Ref.make(1);
-		const total = Object.values(bundles).length - 1;
+		const total = bundlesNeedCompress.length - 1;
 
 		yield* forEach(
 			bundlesNeedCompress,
