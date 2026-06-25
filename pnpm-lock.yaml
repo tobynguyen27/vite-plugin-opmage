@@ -212,6 +212,9 @@ catalogs:
     '@napi-rs/image':
       specifier: ^1.13.0
       version: 1.13.0
+    mlly:
+      specifier: ^1.8.2
+      version: 1.8.2
   lint:
     oxlint-plugin-case-police:
       specifier: ^1.0.0
@@ -267,6 +270,9 @@ importers:
       effect:
         specifier: catalog:prod
         version: 3.21.4
+      mlly:
+        specifier: catalog:dev
+        version: 1.8.2
       ohash:
         specifier: catalog:prod
         version: 2.0.11

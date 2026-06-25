@@ -38,6 +38,7 @@
 	},
 	"dependencies": {
 		"effect": "catalog:prod",
+		"mlly": "catalog:dev",
 		"ohash": "catalog:prod",
 		"pathe": "catalog:prod",
 		"picocolors": "catalog:prod",

@@ -4,6 +4,7 @@ catalogs:
     vite-plus: ^0.2.1
   dev:
     '@napi-rs/image': ^1.13.0
+    mlly: ^1.8.2
     rolldown: ^1.1.3
     vitest: ^4.1.9
   types:
