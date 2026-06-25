@@ -16,31 +16,23 @@ const runWith = (buffer: Buffer, options: Options) =>
 	Effect.runPromise(pngCompressor(buffer).pipe(Effect.provide(Layer.succeed(Config, options))));
 
 describe('Compressor / PNG', () => {
-	it.each(pngBuffers)(
-		'compress with lossless algorithm [$name]',
-		async ({ buffer }) => {
-			const result = await runWith(buffer, {
-				...defaultOptions,
-				png: { algorithm: 'lossless', strip: true },
-			});
+	it.each(pngBuffers)('compress with lossless algorithm [$name]', async ({ buffer }) => {
+		const result = await runWith(buffer, {
+			...defaultOptions,
+			png: { algorithm: 'lossless', strip: true },
+		});
 
-			expect(result).toBeInstanceOf(Uint8Array);
-			expect(result.byteLength).toBeLessThanOrEqual(buffer.byteLength);
-		},
-		30_000,
-	);
+		expect(result).toBeInstanceOf(Uint8Array);
+		expect(result.byteLength).toBeLessThanOrEqual(buffer.byteLength);
+	});
 
-	it.each(pngBuffers)(
-		'compress with lossy algorithm [$name]',
-		async ({ buffer }) => {
-			const result = await runWith(buffer, {
-				...defaultOptions,
-				png: { algorithm: 'lossy', minQuality: 60, maxQuality: 80 },
-			});
+	it.each(pngBuffers)('compress with lossy algorithm [$name]', async ({ buffer }) => {
+		const result = await runWith(buffer, {
+			...defaultOptions,
+			png: { algorithm: 'lossy', minQuality: 60, maxQuality: 80 },
+		});
 
-			expect(result).toBeInstanceOf(Uint8Array);
-			expect(result.byteLength).toBeLessThanOrEqual(buffer.byteLength);
-		},
-		30_000,
-	);
+		expect(result).toBeInstanceOf(Uint8Array);
+		expect(result.byteLength).toBeLessThanOrEqual(buffer.byteLength);
+	});
 });

@@ -23,7 +23,7 @@ describe('Compressor / WEBP', () => {
 
 		expect(result).toBeInstanceOf(Uint8Array);
 		expect(result.byteLength).toBeLessThanOrEqual(webpBuffer.byteLength);
-	}, 6000);
+	});
 
 	it('compress with lossy algorithm', async () => {
 		const result = await runWith({
