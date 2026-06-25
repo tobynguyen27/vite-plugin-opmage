@@ -30,20 +30,20 @@ const compress = (ext: string, buffer: Uint8Array) => {
 
 export const compressor = (bundles: OutputBundle) =>
 	gen(function* () {
-		const bundlesNeedCompress = Object.values(bundles).filter(
-			(bundle): bundle is OutputAsset & { source: Uint8Array } =>
-				bundle.type === 'asset' && typeof bundle.source !== 'string',
-		);
-
 		const { concurrency, ...config } = yield* Config;
 		const logger = yield* Logger;
 		const cacheStorage = yield* CacheStorage;
 
-		const counter = yield* Ref.make(1);
-		const total = bundlesNeedCompress.length - 1;
+		const assetBundles = Object.values(bundles).filter(
+			(bundle): bundle is OutputAsset & { source: Uint8Array } =>
+				bundle.type === 'asset' && typeof bundle.source !== 'string',
+		);
+
+		const bundleCounter = yield* Ref.make(1);
+		const totalBundles = assetBundles.length;
 
 		yield* forEach(
-			bundlesNeedCompress,
+			assetBundles,
 			(bundle) =>
 				gen(function* () {
 					const fileExtension = getFileExtension(bundle.fileName);
@@ -57,13 +57,13 @@ export const compressor = (bundles: OutputBundle) =>
 						hash,
 					);
 
-					const cached = yield* cacheStorage.get(cacheKey);
-					const index = yield* Ref.getAndUpdate(counter, (n) => n + 1);
+					const cache = yield* cacheStorage.get(cacheKey);
+					const currentIndex = yield* Ref.getAndUpdate(bundleCounter, (n) => n + 1);
 
-					if (cached !== null) {
-						bundle.source = Buffer.from(cached, 'base64');
+					if (cache !== null) {
+						bundle.source = Buffer.from(cache, 'base64');
 						logger.info(
-							`${bundle.fileName} (reused cache entry) (+0ms) (${index}/${total})`,
+							`${bundle.fileName} (reused cache entry) (+0ms) (${currentIndex}/${totalBundles})`,
 						);
 					} else {
 						const [duration, newBuffer] = yield* timed(compress(fileExtension, buffer));
@@ -75,8 +75,12 @@ export const compressor = (bundles: OutputBundle) =>
 						);
 
 						bundle.source = newBuffer;
+
+						const oldBufferSizeBytes = buffer.byteLength;
+						const newBufferSizeBytes = newBuffer.byteLength;
+
 						logger.info(
-							`${bundle.fileName} (before: ${prettyBytes(buffer.byteLength)}) (after: ${prettyBytes(newBuffer.byteLength)}) (${resolveTimeMs}ms) (${index}/${total})`,
+							`${bundle.fileName} (before: ${prettyBytes(oldBufferSizeBytes)}) (after: ${prettyBytes(newBufferSizeBytes)}) (${resolveTimeMs}ms) (${currentIndex}/${totalBundles})`,
 						);
 					}
 				}),
