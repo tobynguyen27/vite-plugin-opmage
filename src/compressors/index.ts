@@ -58,10 +58,11 @@ export const compressor = (bundles: OutputBundle) =>
 					);
 
 					const cache = yield* cacheStorage.get(cacheKey);
-					const currentIndex = yield* Ref.getAndUpdate(bundleCounter, (n) => n + 1);
 
 					if (cache !== null) {
 						bundle.source = Buffer.from(cache, 'base64');
+
+						const currentIndex = yield* Ref.getAndUpdate(bundleCounter, (n) => n + 1);
 						logger.info(
 							`${bundle.fileName} (reused cache entry) (+0ms) (${currentIndex}/${totalBundles})`,
 						);
@@ -79,6 +80,7 @@ export const compressor = (bundles: OutputBundle) =>
 						const oldBufferSizeBytes = buffer.byteLength;
 						const newBufferSizeBytes = newBuffer.byteLength;
 
+						const currentIndex = yield* Ref.getAndUpdate(bundleCounter, (n) => n + 1);
 						logger.info(
 							`${bundle.fileName} (before: ${prettyBytes(oldBufferSizeBytes)}) (after: ${prettyBytes(newBufferSizeBytes)}) (${resolveTimeMs}ms) (${currentIndex}/${totalBundles})`,
 						);
