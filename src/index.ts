@@ -1,5 +1,5 @@
 import type { Plugin } from 'vite';
-import { Config, defaultOptions, type Options } from './options';
+import { Config, defaultOptions, type Options } from './services/config';
 import { provide, runPromise, tap, timed } from 'effect/Effect';
 import { Duration, Layer, pipe } from 'effect';
 import { compressor } from './compressors';

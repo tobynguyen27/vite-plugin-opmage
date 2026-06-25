@@ -5,7 +5,7 @@ import { pngCompressor } from './png';
 import { jpegCompressor } from './jpeg';
 import { webpCompressor } from './webp';
 import { avifCompressor } from './avif';
-import { Config } from '@/options';
+import { Config } from '@/services/config';
 import { Logger } from '@/services/logger';
 import { Duration, pipe, Ref } from 'effect';
 import prettyBytes from 'pretty-bytes';

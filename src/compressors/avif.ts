@@ -1,4 +1,4 @@
-import { Config } from '@/options';
+import { Config } from '@/services/config';
 import { Transformer } from '@napi-rs/image';
 import { gen, tryPromise } from 'effect/Effect';
 
