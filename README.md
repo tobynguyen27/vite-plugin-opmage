@@ -9,6 +9,9 @@ A Vite plugin that optimizes images using [@napi-rs/image](https://github.com/Br
 
 ## Installation
 
+> [!NOTE]
+> This plugin requires [`@napi-rs/image`](https://npmx.dev/package/@napi-rs/image) to be installed as a peer dependency.
+
 ```bash
 npm install vite-plugin-opmage --save-dev
 ```
