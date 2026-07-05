@@ -245,7 +245,7 @@ catalogs:
   types:
     '@effect/language-service':
       specifier: ^0.86.2
-      version: 0.86.2
+      version: 0.86.4
     '@types/node':
       specifier: ^25.9.4
       version: 25.9.4
@@ -294,7 +294,7 @@ importers:
     devDependencies:
       '@effect/language-service':
         specifier: catalog:types
-        version: 0.86.2
+        version: 0.86.4
       '@types/node':
         specifier: catalog:types
         version: 25.9.4
@@ -347,8 +347,8 @@ packages:
   '@blazediff/core@1.9.1':
     resolution: {integrity: sha512-ehg3jIkYKulZh+8om/O25vkvSsXXwC+skXmyA87FFx6A/45eqOkZsBltMw/TVteb0mloiGT8oGRTcjRAz66zaA==}
 
-  '@effect/language-service@0.86.2':
-    resolution: {integrity: sha512-SaPln+8srOqDJDUwNTDmP5e+IYpEDr9+1epGznnsLqu8xvo6VnxyWARdeLpqvZJlb0Pgy9ca7ppqvvdWbHPXAg==}
+  '@effect/language-service@0.86.4':
+    resolution: {integrity: sha512-XzAPsbwCdm0gRh0E8wJu3wXECb00QraE3LnbObA4RgHn8u2TEbwAjmBadRnwSgOIElfzZjbsRqNR706/V54hDg==}
     hasBin: true
 
   '@emnapi/core@1.11.1':
@@ -1529,7 +1529,7 @@ snapshots:
 
   '@blazediff/core@1.9.1': {}
 
-  '@effect/language-service@0.86.2': {}
+  '@effect/language-service@0.86.4': {}
 
   '@emnapi/core@1.11.1':
     dependencies:
